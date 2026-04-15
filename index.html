@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>発表者選出アプリ</title>
+    <meta name="description" content="イベントや授業で活躍する、モダンでスムーズな発表者選出（ルーレット）アプリ。">
+    <title>プレミアム発表者選出アプリ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&display=swap');
 
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(to right, #48bb78, #38a169);
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
         body {
             font-family: 'M PLUS Rounded 1c', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -20,30 +27,36 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 2rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 90%;
             max-width: 500px;
-            padding: 2rem;
+            padding: 2.5rem;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
         .presenter-display {
-            height: 120px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            color: #4a5568;
+            font-size: 3.5rem;
+            color: #2d3748;
             margin: 2rem 0;
             border: 4px dashed #cbd5e0;
-            border-radius: 1rem;
+            border-radius: 1.5rem;
             position: relative;
             overflow: hidden;
             background: #f7fafc;
+            transition: border-color 0.3s ease;
+        }
+
+        .presenter-display.active {
+            border-color: #667eea;
+            background: #ebf4ff;
         }
 
         .slot-animation {
@@ -51,50 +64,52 @@
         }
 
         @keyframes slot-scroll {
-            0% { transform: translateY(-20px); opacity: 0.5; }
+            0% { transform: translateY(-10px); opacity: 0.7; }
             50% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(20px); opacity: 0.5; }
+            100% { transform: translateY(10px); opacity: 0.7; }
         }
 
         .confetti {
             position: absolute;
             width: 10px;
             height: 10px;
-            background-color: #f00;
             border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
         }
 
         .btn-primary {
-            background: linear-gradient(to right, #48bb78, #38a169);
+            background: var(--accent-gradient);
             color: white;
-            padding: 1rem 2rem;
+            padding: 1.25rem 2rem;
             border-radius: 9999px;
             font-size: 1.25rem;
             font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             border: none;
             width: 100%;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(56, 161, 105, 0.4);
         }
 
-        .btn-primary:active {
-            transform: translateY(1px);
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         .btn-primary:disabled {
             background: #cbd5e0;
+            box-shadow: none;
             cursor: not-allowed;
-            transform: none;
+            opacity: 0.7;
         }
 
         .list-item {
-            animation: slideIn 0.5s ease forwards;
+            animation: slideIn 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
             opacity: 0;
             transform: translateX(-20px);
         }
@@ -103,144 +118,208 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .crown {
-            font-size: 1.5rem;
-            margin-right: 0.5rem;
+        .winner-text {
+            color: #5a67d8;
+            transform: scale(1.1);
+            transition: all 0.5s ease;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">発表者選出</h1>
-        <p id="counter" class="text-gray-500 mb-4">残り 5 名</p>
+    <main class="card">
+        <header>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">発表者選出</h1>
+            <p id="counter" class="text-gray-500 mb-6 font-medium" aria-live="polite">残り -- 名</p>
+        </header>
 
-        <div id="presenter-box" class="presenter-display">
-            <span id="name-label">???</span>
-        </div>
+        <section id="selection-area">
+            <div id="presenter-box" class="presenter-display" role="status" aria-live="polite">
+                <span id="name-label">???</span>
+            </div>
 
-        <button id="draw-btn" class="btn-primary">選出する！</button>
+            <button id="draw-btn" class="btn-primary">選出を開始する！</button>
+        </section>
 
-        <div id="result-list" class="mt-8 text-left border-t pt-4 hidden">
-            <h2 class="text-lg font-bold text-gray-700 mb-2">決定した順序:</h2>
-            <ul id="history" class="space-y-2">
+        <section id="result-list-section" class="mt-8 text-left border-t pt-6 hidden">
+            <h2 class="text-lg font-bold text-gray-700 mb-3">決定した順序:</h2>
+            <ul id="history" class="space-y-3">
                 <!-- 履歴がここに追加される -->
             </ul>
-        </div>
+        </section>
         
-        <button id="reset-btn" class="mt-6 text-sm text-blue-500 underline hidden">リセット</button>
-    </div>
+        <button id="reset-btn" class="mt-8 text-sm text-blue-600 hover:text-blue-800 font-bold transition-colors hidden">リセットして最初からやり直す</button>
+    </main>
 
     <script>
-        // 日本の一般的な姓を生成（ダミーデータ）
-        const lastNames = ["佐藤", "鈴木", "高橋", "田中", "伊藤", "渡辺", "山本", "中村", "小林", "加藤", "吉田", "山田", "佐々木", "山口", "松本", "井上", "木村", "林", "斎藤", "清水"];
-        
-        // 5名をランダムに選ぶ
-        function generateCandidates() {
-            const shuffled = [...lastNames].sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, 5);
-        }
+        /**
+         * アプリの設定値
+         */
+        const CONFIG = {
+            CANDIDATE_COUNT: 5,
+            SPIN_DURATION: 1200, // ms
+            LAST_NAMES: ["佐藤", "鈴木", "高橋", "田中", "伊藤", "渡辺", "山本", "中村", "小林", "加藤", "吉田", "山田", "佐々木", "山口", "松本", "井上", "木村", "林", "斎藤", "清水"]
+        };
 
-        let candidates = generateCandidates();
+        let candidates = [];
         let selectedOrder = [];
         let isSpinning = false;
+        let lastFrameTime = 0;
+        const frameInterval = 80; // スロットの名前更新間隔 (ms)
 
-        const drawBtn = document.getElementById('draw-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const presenterBox = document.getElementById('presenter-box');
-        const nameLabel = document.getElementById('name-label');
-        const counterLabel = document.getElementById('counter');
-        const resultList = document.getElementById('result-list');
-        const historyList = document.getElementById('history');
+        // DOM要素
+        const elements = {
+            drawBtn: document.getElementById('draw-btn'),
+            resetBtn: document.getElementById('reset-btn'),
+            presenterBox: document.getElementById('presenter-box'),
+            nameLabel: document.getElementById('name-label'),
+            counterLabel: document.getElementById('counter'),
+            resultListSection: document.getElementById('result-list-section'),
+            historyList: document.getElementById('history')
+        };
 
-        function draw() {
+        /**
+         * 初期化：候補者を生成
+         */
+        function init() {
+            const shuffled = [...CONFIG.LAST_NAMES].sort(() => 0.5 - Math.random());
+            candidates = shuffled.slice(0, CONFIG.CANDIDATE_COUNT);
+            updateCounter();
+        }
+
+        function updateCounter() {
+            elements.counterLabel.innerText = `残り ${candidates.length} 名`;
+        }
+
+        /**
+         * 選出手続きの開始
+         */
+        function startDrawing() {
             if (isSpinning || candidates.length === 0) return;
 
             isSpinning = true;
-            drawBtn.disabled = true;
-            nameLabel.classList.add('slot-animation');
+            elements.drawBtn.disabled = true;
+            elements.presenterBox.classList.add('active');
+            elements.nameLabel.classList.add('slot-animation');
             
-            // スロット演出（1秒間）
-            let startTime = Date.now();
-            const duration = 1000;
-            
-            const spinInterval = setInterval(() => {
-                const tempName = lastNames[Math.floor(Math.random() * lastNames.length)];
-                nameLabel.innerText = tempName;
-                
-                if (Date.now() - startTime >= duration) {
-                    clearInterval(spinInterval);
+            const startTime = performance.now();
+            lastFrameTime = startTime;
+
+            // requestAnimationFrameを使用したスロット演出
+            function animateSlot(currentTime) {
+                const elapsed = currentTime - startTime;
+
+                if (elapsed < CONFIG.SPIN_DURATION) {
+                    // 一定間隔で名前をランダムに表示
+                    if (currentTime - lastFrameTime > frameInterval) {
+                        const tempName = CONFIG.LAST_NAMES[Math.floor(Math.random() * CONFIG.LAST_NAMES.length)];
+                        elements.nameLabel.innerText = tempName;
+                        lastFrameTime = currentTime;
+                    }
+                    requestAnimationFrame(animateSlot);
+                } else {
                     finalizeSelection();
                 }
-            }, 80);
+            }
+
+            requestAnimationFrame(animateSlot);
         }
 
+        /**
+         * 当選者の確定とUI更新
+         */
         function finalizeSelection() {
             const randomIndex = Math.floor(Math.random() * candidates.length);
             const winner = candidates.splice(randomIndex, 1)[0];
             selectedOrder.push(winner);
 
-            // 表示の更新
-            nameLabel.classList.remove('slot-animation');
-            nameLabel.innerText = winner;
-            nameLabel.classList.add('text-indigo-600', 'scale-110');
+            // 演出の停止
+            elements.nameLabel.classList.remove('slot-animation');
+            elements.nameLabel.innerText = winner;
+            elements.nameLabel.classList.add('winner-text');
             
-            // カウント更新
-            counterLabel.innerText = `残り ${candidates.length} 名`;
+            updateCounter();
             
             // 履歴に追加
-            resultList.classList.remove('hidden');
-            const li = document.createElement('li');
-            li.className = "list-item flex items-center bg-gray-50 p-2 rounded border";
-            li.innerHTML = `<span class="font-bold text-indigo-500 mr-3">${selectedOrder.length}.</span> ${winner} さん`;
-            historyList.appendChild(li);
+            elements.resultListSection.classList.remove('hidden');
+            addHistoryEntry(winner, selectedOrder.length);
 
             // 紙吹雪エフェクト
-            createConfetti();
+            createConfettiEffect();
 
             setTimeout(() => {
-                nameLabel.classList.remove('text-indigo-600', 'scale-110');
+                elements.nameLabel.classList.remove('winner-text');
+                elements.presenterBox.classList.remove('active');
                 isSpinning = false;
                 
                 if (candidates.length > 0) {
-                    drawBtn.disabled = false;
+                    elements.drawBtn.disabled = false;
                 } else {
-                    drawBtn.innerText = "全員選出完了！";
-                    resetBtn.classList.remove('hidden');
+                    elements.drawBtn.innerText = "全員の選出が完了しました！";
+                    elements.resetBtn.classList.remove('hidden');
                 }
-            }, 500);
+            }, 800);
         }
 
-        function createConfetti() {
-            for (let i = 0; i < 30; i++) {
+        function addHistoryEntry(name, index) {
+            const li = document.createElement('li');
+            li.className = "list-item flex items-center bg-white p-3 rounded-xl border border-gray-100 shadow-sm";
+            li.innerHTML = `
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-bold mr-4 text-sm">${index}</span>
+                <span class="text-gray-800 font-medium">${name} さん</span>
+            `;
+            elements.historyList.appendChild(li);
+        }
+
+        function createConfettiEffect() {
+            const fragment = document.createDocumentFragment();
+            const count = 40;
+            
+            for (let i = 0; i < count; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + '%';
                 confetti.style.top = '100%';
-                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
                 
-                document.body.appendChild(confetti);
+                fragment.appendChild(confetti);
 
                 const animation = confetti.animate([
                     { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 },
-                    { transform: `translate3d(${(Math.random() - 0.5) * 200}px, -${Math.random() * 400 + 200}px, 0) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    { transform: `translate3d(${(Math.random() - 0.5) * 300}px, -${Math.random() * 500 + 300}px, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
                 ], {
-                    duration: Math.random() * 1000 + 1000,
-                    easing: 'ease-out'
+                    duration: Math.random() * 1500 + 1000,
+                    easing: 'cubic-bezier(0, .9, .57, 1)'
                 });
 
                 animation.onfinish = () => confetti.remove();
             }
+            document.body.appendChild(fragment);
         }
 
-        function reset() {
-            candidates = generateCandidates();
+        function resetApp() {
+            init();
             selectedOrder = [];
             isSpinning = false;
-            nameLabel.innerText = "???";
-            counterLabel.innerText = "残り 5 名";
-            drawBtn.disabled = false;
-            drawBtn.innerText = "選出する！";
+            elements.nameLabel.innerText = "???";
+            elements.drawBtn.disabled = false;
+            elements.drawBtn.innerText = "選出を開始する！";
+            elements.historyList.innerHTML = "";
+            elements.resultListSection.classList.add('hidden');
+            elements.resetBtn.classList.add('hidden');
+            elements.presenterBox.classList.remove('active');
+        }
+
+        // イベントリスナー
+        elements.drawBtn.addEventListener('click', startDrawing);
+        elements.resetBtn.addEventListener('click', resetApp);
+
+        // 初期実行
+        init();
+    </script>
+</body>
+</html>
+     drawBtn.innerText = "選出する！";
             historyList.innerHTML = "";
             resultList.classList.add('hidden');
             resetBtn.classList.add('hidden');
