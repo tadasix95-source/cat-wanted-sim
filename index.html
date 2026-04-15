@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="イベントや授業で活躍する、モダンでスムーズな発表者選出（ルーレット）アプリ。">
-    <title>プレミアム発表者選出アプリ</title>
+    <meta name="description" content="Canvasエフェクトを搭載した、究極に豪華な発表者選出アプリ。">
+    <title>究極の発表者選出アプリ - Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;800&display=swap');
 
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --accent-gradient: linear-gradient(to right, #48bb78, #38a169);
-            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --accent-gradient: linear-gradient(to right, #fbbf24, #f59e0b);
+            --card-bg: rgba(255, 255, 255, 0.98);
         }
 
         body {
@@ -24,113 +24,127 @@
             justify-content: center;
             margin: 0;
             overflow: hidden;
+            color: #f8fafc;
+        }
+
+        #fx-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
         }
 
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            border-radius: 2.5rem;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.2);
             width: 90%;
-            max-width: 500px;
-            padding: 2.5rem;
+            max-width: 520px;
+            padding: 3rem;
             text-align: center;
-            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 10;
         }
 
         .presenter-display {
-            height: 140px;
+            height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
-            color: #2d3748;
+            font-size: 4rem;
+            color: #1e293b;
             margin: 2rem 0;
-            border: 4px dashed #cbd5e0;
-            border-radius: 1.5rem;
+            border: 4px solid #e2e8f0;
+            border-radius: 2rem;
             position: relative;
             overflow: hidden;
-            background: #f7fafc;
-            transition: border-color 0.3s ease;
+            background: #ffffff;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .presenter-display.active {
-            border-color: #667eea;
-            background: #ebf4ff;
+            border-color: #fbbf24;
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
         }
 
         .slot-animation {
-            animation: slot-scroll 0.1s linear infinite;
+            animation: slot-scroll 0.08s linear infinite;
         }
 
         @keyframes slot-scroll {
-            0% { transform: translateY(-10px); opacity: 0.7; }
+            0% { transform: translateY(-5px); opacity: 0.8; }
             50% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(10px); opacity: 0.7; }
-        }
-
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 100;
+            100% { transform: translateY(5px); opacity: 0.8; }
         }
 
         .btn-primary {
             background: var(--accent-gradient);
-            color: white;
+            color: #78350f;
             padding: 1.25rem 2rem;
             border-radius: 9999px;
-            font-size: 1.25rem;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             border: none;
             width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .btn-primary:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(56, 161, 105, 0.4);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(245, 158, 11, 0.5);
         }
 
         .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         .btn-primary:disabled {
-            background: #cbd5e0;
+            background: #e2e8f0;
+            color: #94a3b8;
             box-shadow: none;
             cursor: not-allowed;
-            opacity: 0.7;
         }
 
         .list-item {
-            animation: slideIn 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
             opacity: 0;
-            transform: translateX(-20px);
+            transform: translateY(20px);
         }
 
         @keyframes slideIn {
-            to { opacity: 1; transform: translateX(0); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .winner-text {
-            color: #5a67d8;
-            transform: scale(1.1);
-            transition: all 0.5s ease;
+        .winner-active {
+            animation: winner-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #f59e0b;
+        }
+
+        @keyframes winner-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
+    <canvas id="fx-canvas"></canvas>
+
     <main class="card">
         <header>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">発表者選出</h1>
-            <p id="counter" class="text-gray-500 mb-6 font-medium" aria-live="polite">残り -- 名</p>
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">発表者選出</h1>
+            <p id="counter" class="text-indigo-600 font-bold mb-6 tracking-wide" aria-live="polite">READY</p>
         </header>
 
         <section id="selection-area">
@@ -138,63 +152,145 @@
                 <span id="name-label">???</span>
             </div>
 
-            <button id="draw-btn" class="btn-primary">選出を開始する！</button>
+            <button id="draw-btn" class="btn-primary">選出スタート！</button>
         </section>
 
-        <section id="result-list-section" class="mt-8 text-left border-t pt-6 hidden">
-            <h2 class="text-lg font-bold text-gray-700 mb-3">決定した順序:</h2>
-            <ul id="history" class="space-y-3">
-                <!-- 履歴がここに追加される -->
-            </ul>
+        <section id="result-list-section" class="mt-10 text-left border-t border-gray-100 pt-6 hidden">
+            <h2 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">選出履歴</h2>
+            <ul id="history" class="space-y-3"></ul>
         </section>
         
-        <button id="reset-btn" class="mt-8 text-sm text-blue-600 hover:text-blue-800 font-bold transition-colors hidden">リセットして最初からやり直す</button>
+        <button id="reset-btn" class="mt-8 text-xs text-gray-400 hover:text-indigo-600 font-bold tracking-widest uppercase transition-colors hidden">リセット</button>
     </main>
 
     <script>
-        /**
-         * アプリの設定値
-         */
         const CONFIG = {
             CANDIDATE_COUNT: 5,
-            SPIN_DURATION: 1200, // ms
-            LAST_NAMES: ["佐藤", "鈴木", "高橋", "田中", "伊藤", "渡辺", "山本", "中村", "小林", "加藤", "吉田", "山田", "佐々木", "山口", "松本", "井上", "木村", "林", "斎藤", "清水"]
+            SPIN_DURATION: 1500,
+            NAMES: ["佐藤", "鈴木", "高橋", "田中", "伊藤", "渡辺", "山本", "中村", "小林", "加藤", "吉田", "山田", "佐々木", "山口", "松本", "井上", "木村", "林", "斎藤", "清水"]
         };
 
-        let candidates = [];
-        let selectedOrder = [];
-        let isSpinning = false;
-        let lastFrameTime = 0;
-        const frameInterval = 80; // スロットの名前更新間隔 (ms)
+        // --- Canvas Effect System ---
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
 
-        // DOM要素
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, color, type = 'confetti') {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.type = type;
+                this.size = type === 'firework' ? Math.random() * 3 + 2 : Math.random() * 8 + 4;
+                this.destX = x;
+                this.destY = y;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const force = type === 'firework' ? Math.random() * 10 + 5 : Math.random() * 5 + 2;
+                this.vx = Math.cos(angle) * force;
+                this.vy = Math.sin(angle) * force;
+                
+                this.gravity = type === 'firework' ? 0.15 : 0.1;
+                this.friction = 0.96;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 10;
+            }
+
+            update() {
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+                this.rotation += this.rotationSpeed;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                
+                if (this.type === 'firework') {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle(x, y, color, 'firework'));
+            }
+        }
+
+        function createConfettiAction() {
+            const colors = ['#f59e0b', '#fbbf24', '#6366f1', '#ec4899', '#10b981'];
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * canvas.width;
+                const y = -20;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particles.push(new Particle(x, y, color, 'confetti'));
+            }
+        }
+
+        function animationLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            requestAnimationFrame(animationLoop);
+        }
+        animationLoop();
+
+        // --- App Logic ---
+        let candidates = [];
+        let selectedCount = 0;
+        let isSpinning = false;
+        let lastSpinTime = 0;
+
         const elements = {
             drawBtn: document.getElementById('draw-btn'),
             resetBtn: document.getElementById('reset-btn'),
             presenterBox: document.getElementById('presenter-box'),
             nameLabel: document.getElementById('name-label'),
             counterLabel: document.getElementById('counter'),
-            resultListSection: document.getElementById('result-list-section'),
+            resultSection: document.getElementById('result-list-section'),
             historyList: document.getElementById('history')
         };
 
-        /**
-         * 初期化：候補者を生成
-         */
         function init() {
-            const shuffled = [...CONFIG.LAST_NAMES].sort(() => 0.5 - Math.random());
+            const shuffled = [...CONFIG.NAMES].sort(() => 0.5 - Math.random());
             candidates = shuffled.slice(0, CONFIG.CANDIDATE_COUNT);
+            selectedCount = 0;
             updateCounter();
         }
 
         function updateCounter() {
-            elements.counterLabel.innerText = `残り ${candidates.length} 名`;
+            elements.counterLabel.innerText = `REMAINING: ${candidates.length} / ${CONFIG.CANDIDATE_COUNT}`;
         }
 
-        /**
-         * 選出手続きの開始
-         */
-        function startDrawing() {
+        function draw() {
             if (isSpinning || candidates.length === 0) return;
 
             isSpinning = true;
@@ -203,118 +299,81 @@
             elements.nameLabel.classList.add('slot-animation');
             
             const startTime = performance.now();
-            lastFrameTime = startTime;
-
-            // requestAnimationFrameを使用したスロット演出
-            function animateSlot(currentTime) {
+            
+            function spin(currentTime) {
                 const elapsed = currentTime - startTime;
-
                 if (elapsed < CONFIG.SPIN_DURATION) {
-                    // 一定間隔で名前をランダムに表示
-                    if (currentTime - lastFrameTime > frameInterval) {
-                        const tempName = CONFIG.LAST_NAMES[Math.floor(Math.random() * CONFIG.LAST_NAMES.length)];
-                        elements.nameLabel.innerText = tempName;
-                        lastFrameTime = currentTime;
+                    if (currentTime - lastSpinTime > 60) {
+                        elements.nameLabel.innerText = CONFIG.NAMES[Math.floor(Math.random() * CONFIG.NAMES.length)];
+                        lastSpinTime = currentTime;
                     }
-                    requestAnimationFrame(animateSlot);
+                    requestAnimationFrame(spin);
                 } else {
-                    finalizeSelection();
+                    finish();
                 }
             }
-
-            requestAnimationFrame(animateSlot);
+            requestAnimationFrame(spin);
         }
 
-        /**
-         * 当選者の確定とUI更新
-         */
-        function finalizeSelection() {
-            const randomIndex = Math.floor(Math.random() * candidates.length);
-            const winner = candidates.splice(randomIndex, 1)[0];
-            selectedOrder.push(winner);
+        function finish() {
+            const winner = candidates.splice(Math.floor(Math.random() * candidates.length), 1)[0];
+            selectedCount++;
 
-            // 演出の停止
             elements.nameLabel.classList.remove('slot-animation');
             elements.nameLabel.innerText = winner;
-            elements.nameLabel.classList.add('winner-text');
+            elements.nameLabel.classList.add('winner-active');
             
             updateCounter();
             
-            // 履歴に追加
-            elements.resultListSection.classList.remove('hidden');
-            addHistoryEntry(winner, selectedOrder.length);
+            // Canvas Celebration
+            const rect = elements.presenterBox.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Multiple explosions
+            setTimeout(() => createExplosion(centerX, centerY, '#f59e0b'), 0);
+            setTimeout(() => createExplosion(centerX - 100, centerY - 50, '#6366f1'), 200);
+            setTimeout(() => createExplosion(centerX + 100, centerY - 50, '#ec4899'), 400);
+            createConfettiAction();
 
-            // 紙吹雪エフェクト
-            createConfettiEffect();
+            // History
+            elements.resultSection.classList.remove('hidden');
+            const li = document.createElement('li');
+            li.className = "list-item flex items-center justify-between bg-white/50 backdrop-blur p-4 rounded-2xl border border-gray-50 shadow-sm";
+            li.innerHTML = `
+                <span class="flex items-center gap-3">
+                    <span class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-full text-xs font-black">${selectedCount}</span>
+                    <span class="text-gray-900 font-bold text-lg">${winner} さん</span>
+                </span>
+                <span class="text-yellow-500">★</span>
+            `;
+            elements.historyList.prepend(li);
 
             setTimeout(() => {
-                elements.nameLabel.classList.remove('winner-text');
+                elements.nameLabel.classList.remove('winner-active');
                 elements.presenterBox.classList.remove('active');
                 isSpinning = false;
                 
                 if (candidates.length > 0) {
                     elements.drawBtn.disabled = false;
                 } else {
-                    elements.drawBtn.innerText = "全員の選出が完了しました！";
+                    elements.drawBtn.innerText = "COMPLETE!";
                     elements.resetBtn.classList.remove('hidden');
                 }
-            }, 800);
+            }, 1000);
         }
 
-        function addHistoryEntry(name, index) {
-            const li = document.createElement('li');
-            li.className = "list-item flex items-center bg-white p-3 rounded-xl border border-gray-100 shadow-sm";
-            li.innerHTML = `
-                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-bold mr-4 text-sm">${index}</span>
-                <span class="text-gray-800 font-medium">${name} さん</span>
-            `;
-            elements.historyList.appendChild(li);
-        }
-
-        function createConfettiEffect() {
-            const fragment = document.createDocumentFragment();
-            const count = 40;
-            
-            for (let i = 0; i < count; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.top = '100%';
-                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
-                
-                fragment.appendChild(confetti);
-
-                const animation = confetti.animate([
-                    { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 },
-                    { transform: `translate3d(${(Math.random() - 0.5) * 300}px, -${Math.random() * 500 + 300}px, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
-                ], {
-                    duration: Math.random() * 1500 + 1000,
-                    easing: 'cubic-bezier(0, .9, .57, 1)'
-                });
-
-                animation.onfinish = () => confetti.remove();
-            }
-            document.body.appendChild(fragment);
-        }
-
-        function resetApp() {
+        elements.drawBtn.addEventListener('click', draw);
+        elements.resetBtn.addEventListener('click', () => {
             init();
-            selectedOrder = [];
-            isSpinning = false;
-            elements.nameLabel.innerText = "???";
-            elements.drawBtn.disabled = false;
-            elements.drawBtn.innerText = "選出を開始する！";
             elements.historyList.innerHTML = "";
-            elements.resultListSection.classList.add('hidden');
+            elements.resultSection.classList.add('hidden');
             elements.resetBtn.classList.add('hidden');
-            elements.presenterBox.classList.remove('active');
-        }
+            elements.nameLabel.innerText = "???";
+            elements.drawBtn.innerText = "選出スタート！";
+            elements.drawBtn.disabled = false;
+        });
 
-        // イベントリスナー
-        elements.drawBtn.addEventListener('click', startDrawing);
-        elements.resetBtn.addEventListener('click', resetApp);
-
-        // 初期実行
         init();
     </script>
 </body>
