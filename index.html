@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>発表者選出アプリ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&display=swap');
+
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .presenter-display {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #4a5568;
+            margin: 2rem 0;
+            border: 4px dashed #cbd5e0;
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+            background: #f7fafc;
+        }
+
+        .slot-animation {
+            animation: slot-scroll 0.1s linear infinite;
+        }
+
+        @keyframes slot-scroll {
+            0% { transform: translateY(-20px); opacity: 0.5; }
+            50% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(20px); opacity: 0.5; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #48bb78, #38a169);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s, box-shadow 0.1s;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .list-item {
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .crown {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">発表者選出</h1>
+        <p id="counter" class="text-gray-500 mb-4">残り 5 名</p>
+
+        <div id="presenter-box" class="presenter-display">
+            <span id="name-label">???</span>
+        </div>
+
+        <button id="draw-btn" class="btn-primary">選出する！</button>
+
+        <div id="result-list" class="mt-8 text-left border-t pt-4 hidden">
+            <h2 class="text-lg font-bold text-gray-700 mb-2">決定した順序:</h2>
+            <ul id="history" class="space-y-2">
+                <!-- 履歴がここに追加される -->
+            </ul>
+        </div>
+        
+        <button id="reset-btn" class="mt-6 text-sm text-blue-500 underline hidden">リセット</button>
+    </div>
+
+    <script>
+        // 日本の一般的な姓を生成（ダミーデータ）
+        const lastNames = ["佐藤", "鈴木", "高橋", "田中", "伊藤", "渡辺", "山本", "中村", "小林", "加藤", "吉田", "山田", "佐々木", "山口", "松本", "井上", "木村", "林", "斎藤", "清水"];
+        
+        // 5名をランダムに選ぶ
+        function generateCandidates() {
+            const shuffled = [...lastNames].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 5);
+        }
+
+        let candidates = generateCandidates();
+        let selectedOrder = [];
+        let isSpinning = false;
+
+        const drawBtn = document.getElementById('draw-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const presenterBox = document.getElementById('presenter-box');
+        const nameLabel = document.getElementById('name-label');
+        const counterLabel = document.getElementById('counter');
+        const resultList = document.getElementById('result-list');
+        const historyList = document.getElementById('history');
+
+        function draw() {
+            if (isSpinning || candidates.length === 0) return;
+
+            isSpinning = true;
+            drawBtn.disabled = true;
+            nameLabel.classList.add('slot-animation');
+            
+            // スロット演出（1秒間）
+            let startTime = Date.now();
+            const duration = 1000;
+            
+            const spinInterval = setInterval(() => {
+                const tempName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                nameLabel.innerText = tempName;
+                
+                if (Date.now() - startTime >= duration) {
+                    clearInterval(spinInterval);
+                    finalizeSelection();
+                }
+            }, 80);
+        }
+
+        function finalizeSelection() {
+            const randomIndex = Math.floor(Math.random() * candidates.length);
+            const winner = candidates.splice(randomIndex, 1)[0];
+            selectedOrder.push(winner);
+
+            // 表示の更新
+            nameLabel.classList.remove('slot-animation');
+            nameLabel.innerText = winner;
+            nameLabel.classList.add('text-indigo-600', 'scale-110');
+            
+            // カウント更新
+            counterLabel.innerText = `残り ${candidates.length} 名`;
+            
+            // 履歴に追加
+            resultList.classList.remove('hidden');
+            const li = document.createElement('li');
+            li.className = "list-item flex items-center bg-gray-50 p-2 rounded border";
+            li.innerHTML = `<span class="font-bold text-indigo-500 mr-3">${selectedOrder.length}.</span> ${winner} さん`;
+            historyList.appendChild(li);
+
+            // 紙吹雪エフェクト
+            createConfetti();
+
+            setTimeout(() => {
+                nameLabel.classList.remove('text-indigo-600', 'scale-110');
+                isSpinning = false;
+                
+                if (candidates.length > 0) {
+                    drawBtn.disabled = false;
+                } else {
+                    drawBtn.innerText = "全員選出完了！";
+                    resetBtn.classList.remove('hidden');
+                }
+            }, 500);
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '100%';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                
+                document.body.appendChild(confetti);
+
+                const animation = confetti.animate([
+                    { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate3d(${(Math.random() - 0.5) * 200}px, -${Math.random() * 400 + 200}px, 0) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 1000 + 1000,
+                    easing: 'ease-out'
+                });
+
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        function reset() {
+            candidates = generateCandidates();
+            selectedOrder = [];
+            isSpinning = false;
+            nameLabel.innerText = "???";
+            counterLabel.innerText = "残り 5 名";
+            drawBtn.disabled = false;
+            drawBtn.innerText = "選出する！";
+            historyList.innerHTML = "";
+            resultList.classList.add('hidden');
+            resetBtn.classList.add('hidden');
+        }
+
+        drawBtn.addEventListener('click', draw);
+        resetBtn.addEventListener('click', reset);
+    </script>
+</body>
+</html>
