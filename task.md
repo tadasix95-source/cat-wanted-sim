@@ -1,0 +1,8 @@
+- [x] 既存ファイルのクリーンアップ
+- [x] Astroプロジェクトの初期化（Tailwind CSS, Reactの追加）
+- [x] 遺伝ロジック (`genetics.ts`) の実装
+- [x] Tailwindによるプロジェクト全体のスタイリング準備 (ベース設定)
+- [x] 猫のSVGコンポーネント (`CatSVG.tsx`) の実装
+- [x] シミュレーター本体コンポーネント (`Simulator.tsx`) の実装
+- [x] ページ (`index.astro`) への統合とUIの調整
+- [x] ローカル環境での動作検証

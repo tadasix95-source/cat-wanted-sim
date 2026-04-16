@@ -1,0 +1,37 @@
+---
+import '../styles/global.css';
+import Simulator from '../components/Simulator';
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Cat Genetics Simulator | 猫の毛色遺伝シミュレーター</title>
+        <meta name="description" content="パパ猫とママ猫の柄を選ぶと、生まれる子猫の確率を計算・表示するインタラクティブなシミュレーターアプリです。" />
+	</head>
+	<body class="bg-white min-h-screen text-slate-900 font-sans selection:bg-pink-200 selection:text-pink-900 flex flex-col overflow-x-hidden">
+        {/* Header */}
+        <header class="w-full py-2 text-center bg-white border-b border-slate-100 shadow-sm relative z-10 shrink-0">
+            <h1 class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 tracking-tight">
+                Cat Genetics Simulator
+                <span class="ml-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest hidden sm:inline-block">猫の毛色遺伝シミュレーター</span>
+            </h1>
+        </header>
+
+        {/* Main Content */}
+		<main class="flex-1 w-full max-w-screen-xl mx-auto px-2 md:px-4 py-3 relative flex items-start justify-center overflow-y-auto">
+            <Simulator client:load />
+		</main>
+
+        {/* Footer */}
+        <footer class="py-2 mb-16 text-center text-slate-400 text-[9px] border-t border-slate-50 bg-white shrink-0 relative z-10">
+            <p>&copy; 2026 Cat Genetics Simulator. Built with Astro, React & Tailwind CSS.</p>
+        </footer>
+        
+        {/* Extra Bottom Space to center content visually */}
+        <div class="h-8 shrink-0"></div>
+	</body>
+</html>

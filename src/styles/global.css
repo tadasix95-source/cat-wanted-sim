@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', 'Roboto', 'Outfit', sans-serif;
+  --color-primary: #f472b6; /* pink-400 */
+  --color-secondary: #a78bfa; /* violet-400 */
+  --color-accent: #fbbf24; /* amber-400 */
+}
+
+@layer components {
+  .animate-pop {
+    animation: pop 0.2s ease-out;
+  }
+  
+  .animate-bg-shimmer {
+    animation: bg-shimmer 1.5s infinite alternate;
+  }
+  
+  .animate-reveal {
+    animation: reveal 2.5s ease-out both;
+  }
+}
+
+@keyframes reveal {
+  0% {
+    filter: blur(15px);
+    opacity: 0.3;
+    transform: scale(0.98);
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pop {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bg-shimmer {
+  0% { background-color: rgba(254, 249, 195, 0.5); }
+  100% { background-color: rgba(254, 240, 138, 0.8); }
+}
+
+@layer base {
+  body {
+    @apply bg-white text-slate-900 antialiased min-h-screen flex flex-col;
+  }
+}
