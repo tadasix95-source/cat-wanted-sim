@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import Simulator from '../components/Simulator';
+import CatWANTEDProfilerV3 from '../components/CatWANTEDProfilerV3';
 ---
 
 <!DOCTYPE html>
@@ -9,29 +9,27 @@ import Simulator from '../components/Simulator';
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Cat Genetics Simulator | 猫の毛色遺伝シミュレーター</title>
-        <meta name="description" content="パパ猫とママ猫の柄を選ぶと、生まれる子猫の確率を計算・表示するインタラクティブなシミュレーターアプリです。" />
+		<title>父猫指名手配シミュレーター | 猫の毛色遺伝</title>
+		<meta name="description" content="ママ猫と子猫の毛色・白斑から、遺伝法則に基づいてパパ猫（犯ニャン）を指名手配！猫の毛色遺伝・父猫特定シミュレーター。" />
 	</head>
-	<body class="bg-white min-h-screen text-slate-900 font-sans selection:bg-pink-200 selection:text-pink-900 flex flex-col overflow-x-hidden">
-        {/* Header */}
-        <header class="w-full py-2 text-center bg-white border-b border-slate-100 shadow-sm relative z-10 shrink-0">
-            <h1 class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 tracking-tight">
-                Cat Genetics Simulator
-                <span class="ml-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest hidden sm:inline-block">猫の毛色遺伝シミュレーター</span>
-            </h1>
-        </header>
+	<body class="h-screen overflow-hidden text-slate-900 font-sans selection:bg-pink-200 selection:text-pink-900 flex flex-col" style="background-color: #FFFBEB;">
 
-        {/* Main Content */}
-		<main class="flex-1 w-full max-w-screen-xl mx-auto px-2 md:px-4 py-3 relative flex items-start justify-center overflow-y-auto">
-            <Simulator client:load />
+		{/* Header */}
+		<header class="w-full py-2 px-4 text-center border-b border-amber-100 shadow-sm relative z-10 shrink-0" style="background-color: #FFFBEB;">
+			<h1 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 tracking-tight leading-tight">
+				🔍 父猫指名手配シミュレーター
+			</h1>
+			<p class="text-[10px] text-amber-400 font-bold tracking-wider leading-tight">WANTED! — 猫の毛色遺伝で犯人（パパ猫）をプロファイリング</p>
+		</header>
+
+		{/* Main — h-screen minus header/footer, max-w-screen-lg centered */}
+		<main class="flex-1 min-h-0 w-full max-w-screen-lg mx-auto px-4 py-3 flex flex-col">
+			<CatWANTEDProfilerV3 client:load />
 		</main>
 
-        {/* Footer */}
-        <footer class="py-2 mb-16 text-center text-slate-400 text-[9px] border-t border-slate-50 bg-white shrink-0 relative z-10">
-            <p>&copy; 2026 Cat Genetics Simulator. Built with Astro, React & Tailwind CSS.</p>
-        </footer>
-        
-        {/* Extra Bottom Space to center content visually */}
-        <div class="h-8 shrink-0"></div>
+		{/* Footer */}
+		<footer class="py-1.5 text-center text-slate-300 text-[9px] border-t border-amber-50 shrink-0 relative z-10" style="background-color: #FFFBEB;">
+			<p>&copy; 2026 Cat Genetics Simulator. Astro + React + Tailwind CSS.</p>
+		</footer>
 	</body>
 </html>
