@@ -1,14 +1,11 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
-
-import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import tailwind from '@astrojs/tailwind';
 
-// https://astro.build/config
 export default defineConfig({
-  vite: {
-    plugins: [tailwindcss()]
-  },
-
-  integrations: [react()]
+  // あなたのリポジトリ名に合わせて設定
+  site: 'https://tadasix95-source.github.io',
+  base: '/cat-wanted-sim',
+  integrations: [react(), tailwind()],
+  output: 'static', // これを追加
 });
