@@ -1,0 +1,10 @@
+import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import tailwind from '@astrojs/tailwind';
+
+export default defineConfig({
+  // あなたのGitHubのURLに合わせて住所を指定します
+  site: 'https://tadasix95-source.github.io',
+  base: '/cat-wanted-sim',
+  integrations: [react(), tailwind()],
+});
