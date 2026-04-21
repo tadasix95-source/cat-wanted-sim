@@ -1,10 +1,33 @@
-import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
+name: Deploy to GitHub Pages
 
-export default defineConfig({
-  // あなたのGitHubのURLに合わせて住所を指定します
-  site: 'https://tadasix95-source.github.io',
-  base: '/cat-wanted-sim',
-  integrations: [react(), tailwind()],
-});
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install, build, and upload
+        uses: withastro/action@v3
+        with:
+          path: .
+          node-version: 20
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
